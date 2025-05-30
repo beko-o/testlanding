@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Регистрация</title>
+  <meta name="description" content="Регистрация нового пользователя через API">
+</head>
+<body>
+  <h1>Регистрация</h1>
+  <form id="registerForm">
+    <input type="email" name="email" placeholder="Email" required /><br/>
+    <input type="password" name="password" placeholder="Пароль (мин. 8 символов)" required /><br/>
+    <input type="text" name="phoneCountryCode" placeholder="Код страны (например, +1)" required /><br/>
+    <input type="text" name="phoneNumber" placeholder="Номер телефона" required /><br/>
+    <input type="text" name="name" placeholder="Имя" /><br/>
+    <input type="text" name="surname" placeholder="Фамилия" /><br/>
+    <input type="date" name="birthDate" placeholder="Дата рождения (YYYY-MM-DD)" /><br/>
+    <button type="submit">Зарегистрироваться</button>
+  </form>
+
+  <div id="result"></div>
+
+  <script>
+    const form = document.getElementById('registerForm');
+    const result = document.getElementById('result');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData.entries());
+
+      const res = await fetch('https://portal.open-heart.ai/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+
+      const json = await res.json();
+
+      if (res.status === 201) {
+        result.innerHTML = `<p style="color:green;">Успешно зарегистрировано: ${json.email}</p>`;
+      } else {
+        result.innerHTML = `<p style="color:red;">Ошибка: ${json.title || 'Неизвестная ошибка'}</p>`;
+      }
+    });
+  </script>
+</body>
+</html>
